@@ -11,8 +11,6 @@ function connected() {
 		document.body.classList.add('open');
 	}
 
-	document.getElementById('threshold').value = Floower.threshold;
-
 	let swatches = document.getElementById('swatches');
 
 	Floower.colorScheme.forEach((color, i) => {
@@ -47,7 +45,7 @@ if (navigator.bluetooth) {
 
 	document.getElementById('connect').disabled = false;
 	document.getElementById('connect').addEventListener('click', async () => {
-		await Floower.connect();
+		await Floower.connect('L4lsvtsjMR');
 
 		if (Floower.connected) {
 			connected();
@@ -92,29 +90,6 @@ document.getElementById('bulb').addEventListener('click', () => {
 	Floower.toggle();
 	document.body.style.setProperty('--petal', Floower.petals);
 	document.body.classList.toggle('open');
-});	
-
-
-
-/* Pills */
-
-document.getElementById('color').addEventListener('click', (e) => {
-	document.body.classList.remove('color', 'customize');
-	document.body.classList.add('color');
-});
-
-document.getElementById('customize').addEventListener('click', (e) => {
-	document.body.classList.remove('color', 'customize');
-	document.body.classList.add('customize');
-});
-
-
-
-/* Threshold */
-
-document.getElementById('threshold').addEventListener('change', event => {
-	console.log(event);
-	Floower.threshold = event.target.value;
 });
 
 

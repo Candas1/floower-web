@@ -39,7 +39,6 @@ body.connected .connect {
 	color: #000;
 	font-size: 4rem;
 	font-weight: bold;
-	text-transform: lowercase;
 	margin-bottom: 2rem;
 }
 .connect h1 em {

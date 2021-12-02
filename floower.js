@@ -5,81 +5,38 @@
 	class Floower {
 		constructor() {
 			this._events = {}
-			this._service = null;
+			this._connected = false;
 			this._colorScheme = [];
-			this._threshold = 0;
 			this._state = {
-				petals:		0,
-				r:			0,
-				g:			0,
-				b:			0
+				petalsLevel: 0,
+				red: 0,
+				green: 0,
+				blue: 0
 			}
 		}
 
 
 		/* Functions */
 
-		reconnect() {
-			return new Promise(async (resolve, reject) => {
-				let device;
-			
-				if (navigator.bluetooth.getDevices) {
-					let id = localStorage.getItem('last-used-device');
-	
-					if (id) {
-						let devices = await navigator.bluetooth.getDevices();
-	
-						devices.forEach(d => {
-							if (d.id == id) {
-								device = d;
-							}
-						});
-					}
-				}
-	
-				if (device) {
-					let advertisementreceived = false;
-	
-					device.addEventListener('advertisementreceived', async (event) => {
-						if (!advertisementreceived && !this._service) {
-							advertisementreceived = true;
-	
-							let server = await device.gatt.connect();
-							await this.initialize(server);
-
-							resolve();
-						}
-					});
-	
-					await device.watchAdvertisements();
-				}
-			});
+		async reconnect() {
+			let apiKey = localStorage.getItem('last-used-api-key');
+			if (apiKey) {
+				this._apiKey = apiKey;
+				await this._retrieveInfo();
+			}
 		}
 
-		async connect() {
-			let device = await navigator.bluetooth.requestDevice({
-				filters: [ { services: [ '28e17913-66c1-475f-a76e-86b5242f4cec' ] } ]
-			});		
+		async connect(apiKey) {
+			this._apiKey = apiKey;
+			await this._retrieveInfo();
 
-			localStorage.setItem('last-used-device', device.id);
-			
-			let server = await device.gatt.connect();
-			await this.initialize(server);
-		}
-
-		async initialize(server) {
-			server.device.addEventListener('gattserverdisconnected', this._disconnect.bind(this));
-
-			this._service = await server.getPrimaryService('28e17913-66c1-475f-a76e-86b5242f4cec');
-	
-			await this._retrieveState();
-			await this._retrieveThreshold();
-			await this._retrieveColorScheme();
+			localStorage.setItem('last-used-api-key', apiKey);
 		}
 
 		disconnect() {
-			this._service.device.gatt.disconnect();
-			localStorage.removeItem('last-used-device');
+			this._connected = false;
+			localStorage.removeItem('last-used-api-key');
+			this._disconnect(); 
 		}
 
 		addEventListener(e, f) {
@@ -87,39 +44,39 @@
 		}
 
 		off() {
-			this._state.petals = 0;
-			this._state.r = 0;
-			this._state.g = 0;
-			this._state.b = 0;
+			this._state.petalsLevel = 0;
+			this._state.red = 0;
+			this._state.green = 0;
+			this._state.blue = 0;
 
-			this._sendState(0x32);
+			this._sendState();
 		}
 
 		open() {
-			this._state.petals = 100;
-			this._sendState(0x32);
+			this._state.petalsLevel = 100;
+			this._sendState();
 		}
 
 		close() {
-			this._state.petals = 0;
-			this._sendState(0x32);
+			this._state.petalsLevel = 0;
+			this._sendState();
 		}
 
 		toggle() {
-			this._state.petals = this._state.petals ? 0 : 100;
-			this._sendState(0x32);
+			this._state.petalsLevel = this._state.petalsLevel ? 0 : 100;
+			this._sendState();
 		}
 
 
 		/* Properties */
 
 		get connected() {
-			return this._service && this._service.device.gatt.connected;
+			return this._connected;
 		}
 
 		get color() {
-			if (this._state.r != 0 || this._state.g != 0 || this._state.b != 0) {
-				return this._rgbToHex(this._state.r, this._state.g, this._state.b);
+			if (this._state.red != 0 || this._state.green != 0 || this._state.blue != 0) {
+				return this._rgbToHex(this._state.red, this._state.green, this._state.blue);
 			}
 			
 			return null;
@@ -128,11 +85,11 @@
 		set color(color) {
 			var c = parseInt(color.substring(1), 16);
 
-			this._state.r = (c >> 16) & 255;
-			this._state.g = (c >> 8) & 255;
-			this._state.b = c & 255;
+			this._state.red = (c >> 16) & 255;
+			this._state.green = (c >> 8) & 255;
+			this._state.blue = c & 255;
 
-			this._sendState(0x08);
+			this._sendState();
 		}
 
 		get colorScheme() {
@@ -149,22 +106,13 @@
 			this._sendColorScheme();
 		}
 
-		get threshold() {
-			return this._threshold;
-		}
-
-		set threshold(value) {
-			this._threshold = value;
-			this._sendThreshold();
-		}
-
 		get petals() {
-			return this._state.petals;
+			return this._state.petalsLevel;
 		}
 
 		set petals(value) {
-			this._state.petals = value;
-			this._sendState(0x32);
+			this._state.petalsLevel = value;
+			this._sendState();
 		}
 
 
@@ -172,84 +120,155 @@
 		/* Internal functions */
 
 		_disconnect() {
-			this._service = null;
+			this._connected = false;
+			this._fireEvent('disconnected');
+		}
 
-			if (this._events['disconnected']) {
-				this._events['disconnected']();
+		_fireEvent(e) {
+			if (this._events[e]) {
+				this._events[e].call();
 			}
 		}
 
-		async _sendState(speed) {
-			if (!this._service) return; 
-
-			let characteristic = await this._service.getCharacteristic('11226015-0424-44d3-b854-9fc332756cbf');
-			characteristic.writeValue(new Uint8Array([ this._state.petals, this._state.r, this._state.g, this._state.b, speed, 0x03 ]));
-		}
-
-		async _retrieveState() {
-			if (!this._service) return; 
-			
-			let characteristic = await this._service.getCharacteristic('ac292c4b-8bd0-439b-9260-2d9526fff89a');
-			let buffer = await characteristic.readValue();
-
-			if (buffer.byteLength == 4) {
-				this._state = new Object({ 
-					petals: buffer.getUint8(0), r: buffer.getUint8(1), g: buffer.getUint8(2), b: buffer.getUint8(3) 
-				});
+		async _sendState() {
+			if (!this._connected) {
+				return;
 			}
-		}
 
-		async _retrieveThreshold() {
-			if (!this._service) return; 
-			
-			let characteristic = await this._service.getCharacteristic('c380596f-10d2-47a7-95af-95835e0361c7');
-			let buffer = await characteristic.readValue();
-
-			this._threshold = buffer.getUint8(0);
-		}
-
-		async _sendThreshold(speed) {
-			if (!this._service) return; 
-			
-			let characteristic = await this._service.getCharacteristic('c380596f-10d2-47a7-95af-95835e0361c7');
-			characteristic.writeValue(new Uint8Array([ this._threshold ]));
+			await this._sendUpdate({
+				petalsLevel: this._state.petalsLevel, 
+				red: this._state.red, 
+				green: this._state.green, 
+				blue: this._state.blue
+			});
 		}
 
 		async _sendColorScheme() {
-			if (!this._service) return; 
-			
-			let buffer = new Uint8Array(this._colorScheme.length * 3);
-
-			for (let i = 0; i < this._colorScheme.length; i++) {
-				buffer.set([
-					parseInt(this._colorScheme[i].substring(1, 3), 16),
-					parseInt(this._colorScheme[i].substring(3, 5), 16),
-					parseInt(this._colorScheme[i].substring(5, 7), 16)
-				], i * 3);
+			if (!this._connected) {
+				return;
 			}
-
-			let characteristic = await this._service.getCharacteristic('7b1e9cff-de97-4273-85e3-fd30bc72e128');
-			characteristic.writeValue(buffer);
 		}
 
-		async _retrieveColorScheme() {
-			if (!this._service) return; 
+		async _retrieveInfo() {
+			let url = "https://api.floud.cz/floower?apiKey=" + this._apiKey;
+			let result = await this._httpGetRequest(url);
 			
-			let characteristic = await this._service.getCharacteristic('7b1e9cff-de97-4273-85e3-fd30bc72e128');
-			let buffer = await characteristic.readValue();
-
-			for (let i = 0; i < buffer.byteLength / 3; i++) {
-				this._colorScheme[i] = this._rgbToHex(
-					buffer.getUint8((i * 3)),
-					buffer.getUint8((i * 3) + 1),
-					buffer.getUint8((i * 3) + 2)
-				);
+			if (result.status == 200) {
+				let response = result.responseJson;
+				this._state = response.state;
+				if (response.settings && response.settings.colorScheme) {
+					this._colorScheme = response.settings.colorScheme.map(this._schemeHsColorToHex.bind(this));
+				}
+				this._connected = true;
 			}
+		}
+
+		async _sendUpdate(update) {
+			let url = "https://api.floud.cz/floower";
+			update.apiKey = this._apiKey;
+
+			let result = await this._httpPutRequest(url, update);
+
+			if (result.status == 204) {
+				// ok
+			}
+		}
+
+		async _httpGetRequest(url) {
+			let xhr = new XMLHttpRequest();
+
+			return new Promise((resolve, reject) => {
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4) {
+						if (xhr.status >= 200 && xhr.status <= 399) {
+							resolve({
+								responseJson: this._parseJson(xhr.responseText),
+								status: xhr.status
+							});
+						}
+						else {
+							reject({
+								responseText: xhr.responseText,
+								error: xhr.status
+							})
+						}
+					}
+				}.bind(this);
+				xhr.open("GET", url, true);
+				xhr.send(null);
+			});
+		}
+
+		async _httpPutRequest(url, bodyJson) {
+			let xhr = new XMLHttpRequest();
+
+			return new Promise((resolve, reject) => {
+				xhr.onreadystatechange = function() { 
+					if (xhr.readyState == 4) {
+						if (xhr.status >= 200 && xhr.status <= 399) {
+							resolve({
+								responseJson: this._parseJson(xhr.responseText),
+								status: xhr.status
+							});
+						}
+						else {
+							reject({
+								responseText: xhr.responseText,
+								error: xhr.status
+							})
+						}
+					}
+				}.bind(this);
+				xhr.open("PUT", url, true);
+				xhr.setRequestHeader("Content-Type", "application/json");
+				xhr.send(JSON.stringify(bodyJson));
+			});
+		}
+
+		_parseJson(value) {
+			try {
+				return JSON.parse(value)
+			}
+			catch (error) {
+				return {};
+			}
+		}
+
+		_schemeHsColorToHex(valueHS) {
+            let saturation = valueHS & 0x7F
+            saturation = saturation / 100.0;
+            let hue = valueHS >> 7; // 0 - 360
+            hue = hue / 360.0;
+			let rgb = this._hsvToRgb(hue, saturation, 1);
+			return this._rgbToHex(rgb.r, rgb.g, rgb.b);
 		}
 
 		_rgbToHex(red, green, blue) {
-			var rgb = blue | (green << 8) | (red << 16);
+			let rgb = blue | (green << 8) | (red << 16);
 			return '#' + (0x1000000 + rgb).toString(16).slice(1)
+		}
+
+		_hsvToRgb(h, s, v) {
+			let i = Math.floor(h * 6);
+			let f = h * 6 - i;
+			let p = v * (1 - s);
+			let q = v * (1 - f * s);
+			let t = v * (1 - (1 - f) * s);
+
+			let r, g, b;
+			switch (i % 6) {
+				case 0: r = v, g = t, b = p; break;
+				case 1: r = q, g = v, b = p; break;
+				case 2: r = p, g = v, b = t; break;
+				case 3: r = p, g = q, b = v; break;
+				case 4: r = t, g = p, b = v; break;
+				case 5: r = v, g = p, b = q; break;
+			}
+			return {
+				r: Math.round(r * 255),
+				g: Math.round(g * 255),
+				b: Math.round(b * 255)
+			};
 		}
 	}
 
