@@ -13,6 +13,7 @@
 				green: 0,
 				blue: 0
 			}
+			setTimeout(this._refreshState.bind(this), 5000);
 		}
 
 
@@ -147,6 +148,14 @@
 			if (!this._connected) {
 				return;
 			}
+		}
+
+		async _refreshState() {
+			if (this._connected) {
+				this._retrieveInfo();
+				this._fireEvent('change');
+			}
+			setTimeout(this._refreshState.bind(this), 5000);
 		}
 
 		async _retrieveInfo() {

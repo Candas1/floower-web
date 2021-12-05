@@ -30,6 +30,15 @@ function connected() {
 
 		document.getElementById('colorView').innerHTML = '';
 	});
+
+	Floower.addEventListener('change', onChange);
+}
+
+function onChange() {
+	document.body.style.setProperty('--color', Floower.color);
+	document.body.style.setProperty('--petal', Floower.petals);
+	document.body.classList[Floower.color ? 'add' : 'remove']('on');
+	document.body.classList[Floower.petals ? 'add' : 'remove']('open');
 }
 
 async function reconnect() {
@@ -40,28 +49,20 @@ async function reconnect() {
 	}
 }
 
-if (navigator.bluetooth) {
-	reconnect();
+reconnect();
 
-	document.getElementById('connect').disabled = false;
-	document.getElementById('connect').addEventListener('click', async () => {
-		await Floower.connect('L4lsvtsjMR');
+document.getElementById('connect').disabled = false;
+document.getElementById('connect').addEventListener('click', async () => {
+	//await Floower.connect('L4lsvtsjMR');
+	await Floower.connect('QeKLqhxu7H');
 
-		if (Floower.connected) {
-			connected();
-		}
-	});
-}
-else {
-	document.body.classList.add('unsupported');
-}
+	if (Floower.connected) {
+		connected();
+	}
+});
 
 
 /* Buttons */
-
-document.getElementById('disconnect').addEventListener('click', async () => {
-	Floower.disconnect();
-});
 
 document.getElementById('open').addEventListener('click', () => {
 	Floower.open();

@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{ENV:HTTPS} !^.*on
+RewriteRule ^(.*)$ https://live.floower.io/$1 [R,L]
