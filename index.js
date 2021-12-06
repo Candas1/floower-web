@@ -13,9 +13,14 @@ function connected() {
 
 	let swatches = document.getElementById('swatches');
 
+	let elements = swatches.getElementsByClassName('colorScheme');
+	while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
+
 	Floower.colorScheme.forEach((color, i) => {
 		let button = document.createElement('button');
-		button.className = 'color';
+		button.className = 'color colorScheme';
 		button.style.backgroundColor = color;
 		button.dataset.value = color;
 		button.dataset.swatch = i;
@@ -49,7 +54,7 @@ async function reconnect() {
 	}
 }
 
-reconnect();
+//reconnect();
 
 document.getElementById('connect').disabled = false;
 document.getElementById('connect').addEventListener('click', async () => {
@@ -83,6 +88,11 @@ document.getElementById('off').addEventListener('click', () => {
 	document.body.classList.remove('open');
 	document.body.classList.remove('on');
 });	
+
+document.getElementById('getfloower').addEventListener('click', () => {
+	window.open('https://floower.io/shop/floower', '_blank').focus();
+});	
+
 
 
 /* Petals */

@@ -2,7 +2,7 @@
 /* Basic layout */
 
 :root {
-	--settings-height: 25vh;
+	--settings-width: 90px;
 
 	--color: #666666;
 	--petal: 0;
@@ -31,39 +31,37 @@ button {
 	cursor: pointer;
 }
 
-
-
-
-
-
-
 .buttons {
-    position: relative;
-    top: 4vh;
-
 	opacity: 0;
 	transition: opacity 1s;
+	margin: 20px;
 }
 
-.connected .buttons {
+.buttons>div {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.connected .buttons {
 	opacity: 1;
 }
 
-
-/* Requirements */
-
-#requirements {
-	margin-top: 1vh;
-	display: none;
-}
-.unsupported #requirements {
-	display: block;
+.stream {
+	opacity: 0;
 }
 
+body.connected .stream {
+	opacity: 1;
+}
 
 /* Content */
 
 .content {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: 100vh;
 	opacity: 0.3;
 	transition: opacity .5s, fill .5s;
 }
@@ -150,36 +148,105 @@ body.connected .content {
     flood-opacity: 0.1;
 }
 body.on .petal.front.middle {
-	filter:url(#shadow);
+	filter: url(#shadow);
+}
+
+.content .column {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex: 1 1 calc(100vw - var(--settings-width));
+	width: calc(100vw - var(--settings-width));
+	height: 100%;
+}
+
+.content .column .floower {
+	flex: 1 1 auto; 
+	max-height: 400px;
+}
+
+.content .column .stream {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+    width: 100%;
+	background: #222;
+}
+
+.content .column .stream p {
+	font-size: 12px;
+	color: #fff;
+	padding: 10px;
+}
+
+.content .column .stream .video {
+	margin: 10px;
+	flex: 1 1 auto;
+	max-width: 560px;
+	aspect-ratio: 16/9;
+}
+
+.content .column .stream iframe {
+	width: 100%;
+	height: 100%;
 }
 
 .content .lightbulb {
-	position: absolute;
-	top: 10vh;
-	left: 10vw;
-	width: 80vw;
-	height: calc(100vh - var(--settings-height) - 20vh);
+	height: 80%;
 }
 
-.content svg {
-	position: absolute;
-	left: 0;
+.content  .lightbulb svg {
 	width: 100%;
 	height: 100%;
-	overflow: visible;
+}
+
+@media (min-width:1100px) {
+	.content .column {
+		flex-direction: row;
+		align-items: start;
+	}
+
+	.content .floower {
+		margin-top: 50px;
+	}
+
+	.content .column .stream {
+		flex: 0 0 560px;
+		height: 100%;
+		display: flex;
+	}
+
+	.content .column .stream .video {
+		flex: 0 0 auto;
+		width: 560px;
+		height: 315px;
+	}
+}
+
+@media (min-width:1300px) {
+	.content .column {
+		margin-top: 0;
+		align-items: start;
+	}
+
+	.content .floower {
+		margin-top: 0;
+	}
 }
 
 
 
 /* Settings */
 
-.settings {
-	position: absolute;
-	top: calc(100vh - var(--settings-height));
-	width: 100%;
-	min-height: var(--settings-height);
-	background: #333;
+.content .settings {
+	flex: 0 0 auto;
+	width: var(--settings-width);
+	min-width: var(--settings-width);
+	height: 100%;
 
+	background: #333;
 	transition: opacity .3s ease-in-out;
 	opacity: 0.3;
 	pointer-events: none;
@@ -225,7 +292,8 @@ body.connected .settings {
 	stroke-miterlimit: 10;
 }
 .content button#open,
-.content button#close {
+.content button#close,
+.content button#getfloower {
     background: #333;
 	border-color: #333;
     color: #fff;
@@ -249,49 +317,12 @@ body.connected .settings {
 	display: inline-flex;
 }
 
-/* Pills */
-
-.pills {
-	margin-top: -2.4vh;
-	margin-bottom: 0;
-	display: flex;
-}
-.pills button {
-	margin: 0;
-	padding: 1vh 2vh;
-	border-radius: 0;
-	border-left: none;
-	font-size: 2vh;
-	background: #333;
-}
-.pills button:first-of-type {
-	border-left: .3vh solid #888;
-	border-top-left-radius: 1vh;
-	border-bottom-left-radius: 1vh;
-	margin-left: auto;
-}
-.pills button:last-of-type {
-	border-top-right-radius: 1vh;
-	border-bottom-right-radius: 1vh;
-	margin-right: auto;
-}
-
-body.color button#color,
-body.customize button#customize {
-	background: #888;
-	color: #fff;
-}
-
-
-
-
 
 /* Views */
 
 .views {
-	padding: 6vh 0;
-	min-height: 6vh;
 	display: block;
+	padding: 20px;
 }
 .views > div {
 	display: none;
@@ -306,16 +337,20 @@ body.customize div#customizeView {
 
 /* Colors */
 
-#colorView div {
-	display: inline-block;
-	white-space: nowrap;
+#colorView .swatches {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
 }
 
 #colorView button.color {
-	width: 6vh;
-	height: 6vh;
-	margin: -1vh 1vh 4vh;
+	flex: 0 0 auto;
+	width: 40px;
+	height: 40px;
 	vertical-align: top;
+	border-radius: 50%;
 }
 
 #colorView button#off {

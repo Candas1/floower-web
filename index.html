@@ -17,69 +17,79 @@
 	
 	<body class='color'>
 		<div class='content'>
-			<div class='lightbulb'>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-					<filter id="shadow" x="-150%" y="-150%" width="300%" height="300%">
-						<feDropShadow dx="0" dy="0" stdDeviation="35" />
-						<feDropShadow dx="0" dy="0" stdDeviation="35" />
-				  	</filter>
-					  
-					<g id="stem">
-						<polyline points="313.6,476.8 399.3,562.5 486,475.8"/>
-						<polyline points="438.9,478.9 399.3,562.5 359.7,478.7"/>
-						<line x1="399" y1="480" x2="399" y2="683"/>
-					</g>
-					
-					<g id="bulb">
-						<path class="petal back left" d="M355.5,476.5c0,0-20.5,0.8-26.7,0.8c-40.1,0-40.1,0.3-60.9-43.4c-18.2-38.2-24.6-103.9-1-174.6c27.2-81.5,103.7-155.4,107.5-158.1c3.8-2.7,9.7-5.5,9.7,5.9S390.9,377.2,355.5,476.5z"/>
-						<path class="petal back right" d="M444.5,476.5c0,0,20.5,0.8,26.7,0.8c40.1,0,40.1,0.3,60.9-43.4c18.2-38.2,24.6-103.9,1-174.6C506,177.8,429.4,103.9,425.6,101.2c-3.8-2.7-9.7-5.5-9.7,5.9S409.1,377.2,444.5,476.5z"/>
-						<path class="petal back middle" d="M461.3,476.5c0,0,105-193.2-54.7-375.4c-2-2.3-6.1-2-6.1-2c-2,0-4.9-0.1-6.9,2.1C230.5,285.7,339,476.5,339,476.5s29.8,4.1,61.1,4.1S461.3,476.5,461.3,476.5z"/>
-						<path class="petal front left" d="M355.5,476.5c0,0-20.5,0.8-26.7,0.8c-40.1,0-40.1,0.3-60.9-43.4c-18.2-38.2-24.6-103.9-1-174.6c27.2-81.5,103.7-155.4,107.5-158.1c3.8-2.7,9.7-5.5,9.7,5.9S390.9,377.2,355.5,476.5z"/>
-						<path class="petal front right" d="M444.5,476.5c0,0,20.5,0.8,26.7,0.8c40.1,0,40.1,0.3,60.9-43.4c18.2-38.2,24.6-103.9,1-174.6C506,177.8,429.4,103.9,425.6,101.2c-3.8-2.7-9.7-5.5-9.7,5.9S409.1,377.2,444.5,476.5z"/>
-						<path class="petal front middle" d="M461.3,476.5c0,0,105-193.2-54.7-375.4c-2-2.3-6.1-2-6.1-2c-2,0-4.9-0.1-6.9,2.1C230.5,285.7,339,476.5,339,476.5s29.8,4.1,61.1,4.1S461.3,476.5,461.3,476.5z"/>
-					</g>
-				</svg>
+			<div class='settings'>
+				<div class='views'>
+					<div id='colorView'>
+						<div id='swatches' class='swatches'>
+							<button id='off' class='color'>
+								<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="m15 4v11"/><path d="m10 5.219c-3.558 1.821-6 5.51-6 9.781 0 6.075 4.925 11 11 11s11-4.925 11-11c0-4.271-2.442-7.96-6-9.781"/></svg>
+							</button>
+						</div>
+					</div>
+				</div>			
 			</div>
+			<div class='column'>
+				<div class='floower'>
+					<div class='lightbulb'>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+							<filter id="shadow" x="-150%" y="-150%" width="300%" height="300%">
+								<feDropShadow dx="0" dy="0" stdDeviation="35" />
+								<feDropShadow dx="0" dy="0" stdDeviation="35" />
+							</filter>
+							
+							<g id="stem">
+								<polyline points="313.6,476.8 399.3,562.5 486,475.8"/>
+								<polyline points="438.9,478.9 399.3,562.5 359.7,478.7"/>
+								<line x1="399" y1="480" x2="399" y2="683"/>
+							</g>
+							
+							<g id="bulb">
+								<path class="petal back left" d="M355.5,476.5c0,0-20.5,0.8-26.7,0.8c-40.1,0-40.1,0.3-60.9-43.4c-18.2-38.2-24.6-103.9-1-174.6c27.2-81.5,103.7-155.4,107.5-158.1c3.8-2.7,9.7-5.5,9.7,5.9S390.9,377.2,355.5,476.5z"/>
+								<path class="petal back right" d="M444.5,476.5c0,0,20.5,0.8,26.7,0.8c40.1,0,40.1,0.3,60.9-43.4c18.2-38.2,24.6-103.9,1-174.6C506,177.8,429.4,103.9,425.6,101.2c-3.8-2.7-9.7-5.5-9.7,5.9S409.1,377.2,444.5,476.5z"/>
+								<path class="petal back middle" d="M461.3,476.5c0,0,105-193.2-54.7-375.4c-2-2.3-6.1-2-6.1-2c-2,0-4.9-0.1-6.9,2.1C230.5,285.7,339,476.5,339,476.5s29.8,4.1,61.1,4.1S461.3,476.5,461.3,476.5z"/>
+								<path class="petal front left" d="M355.5,476.5c0,0-20.5,0.8-26.7,0.8c-40.1,0-40.1,0.3-60.9-43.4c-18.2-38.2-24.6-103.9-1-174.6c27.2-81.5,103.7-155.4,107.5-158.1c3.8-2.7,9.7-5.5,9.7,5.9S390.9,377.2,355.5,476.5z"/>
+								<path class="petal front right" d="M444.5,476.5c0,0,20.5,0.8,26.7,0.8c40.1,0,40.1,0.3,60.9-43.4c18.2-38.2,24.6-103.9,1-174.6C506,177.8,429.4,103.9,425.6,101.2c-3.8-2.7-9.7-5.5-9.7,5.9S409.1,377.2,444.5,476.5z"/>
+								<path class="petal front middle" d="M461.3,476.5c0,0,105-193.2-54.7-375.4c-2-2.3-6.1-2-6.1-2c-2,0-4.9-0.1-6.9,2.1C230.5,285.7,339,476.5,339,476.5s29.8,4.1,61.1,4.1S461.3,476.5,461.3,476.5z"/>
+							</g>
+						</svg>
+					</div>
 
-			<div class='buttons'>
-				<div>
-					<button id='open'>
-						<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="m15 24.5c-11.9 6.8-11-19.1-11-19.1l11 19.1c11.9 6.8 11-19.1 11-19.1z"/></svg>
-						Open
-					</button>
-					<button id='close'>
-						<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="m15 4s-13.7 22 0 22"/><path d="m15 26c13.7 0 0-22 0-22"/></svg>
-						Close
-					</button>
+					<div class='buttons'>
+						<div>
+							<button id='open'>
+								<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="m15 24.5c-11.9 6.8-11-19.1-11-19.1l11 19.1c11.9 6.8 11-19.1 11-19.1z"/></svg>
+								Open
+							</button>
+							<button id='close'>
+								<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="m15 4s-13.7 22 0 22"/><path d="m15 26c13.7 0 0-22 0-22"/></svg>
+								Close
+							</button>
+							<button id='getfloower'>
+								Get Floower
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div class='stream'>
+					<div class='video'>
+						<iframe width="560" height="315" src="https://www.youtube.com/embed/7hNX0WBy-vs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+					</div>
+					<p>
+						This Floower is blooming in our HQ.
+					</p>
 				</div>
 			</div>
 		</div>
 
 		<div class='connect'>
 			<h1>
-				Floower
+				Live Floower
 			</h1>
 			<p>
-				
+				Remotely control one of our Floower and watch it bloom and fade.
 			</p>
-
-			<button id='connect' disabled>Connect</button>
-		</div>
-
-		<div class='settings'>
-			<div class='views'>
-				<div id='colorView'>
-					<div id='swatches'>
-						<button id='off' class='color'>
-							<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="m15 4v11"/><path d="m10 5.219c-3.558 1.821-6 5.51-6 9.781 0 6.075 4.925 11 11 11s11-4.925 11-11c0-4.271-2.442-7.96-6-9.781"/></svg>
-						</button>
-					</div>
-
-					<p>
-						Click on a color swatch with the Alt or Option key pressed to change the color
-					</p>
-				</div>
-			</div>			
+			<button id='connect' disabled>Start</button>
 		</div>
 	
 		<script type="text/javascript" src="index.js"></script>
