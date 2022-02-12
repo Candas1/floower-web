@@ -1,6 +1,6 @@
 # BluetoothRocks! Floower
 Controlling a Floower with WebBluetooth<br>
-https://candas1.github.io/floower-web/
+https://candas1.github.io/floower-web/<br>
 On mobile, when added to homescreen, the app will be displayed fullscreen
 
 
